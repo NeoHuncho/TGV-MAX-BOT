@@ -1,0 +1,30 @@
+{
+  "name": "tgv-max-bot",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NeoHuncho/TGV-MAX-BOT.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NeoHuncho/TGV-MAX-BOT/issues"
+  },
+  "homepage": "https://github.com/NeoHuncho/TGV-MAX-BOT#readme",
+  "dependencies": {
+    "@instaffogmbh/parse-proxy-url-string": "^1.0.0",
+    "axios": "^0.27.2",
+    "axios-https-proxy-fix": "^0.17.1",
+    "https": "^1.0.0",
+    "https-proxy-agent": "^5.0.1",
+    "moment": "^2.29.3",
+    "proxy-manager": "^1.0.0",
+    "request": "^2.88.2"
+  }
+}
