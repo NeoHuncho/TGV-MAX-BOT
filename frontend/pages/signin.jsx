@@ -8,15 +8,14 @@ import styles from "@pages/styles/signin.module.scss";
 import { useEffect, useState } from "react";
 
 export default function Home() {
+  const auth = getAuth();
+  const router = useRouter();
   useEffect(() => {
     auth.onAuthStateChanged(function (user) {
       console.log("useEffect", user);
       if (user?.uid) return router.push("/trains");
     });
   }, []);
-
-  const auth = getAuth();
-  const router = useRouter();
 
   const [loading, setLoading] = useState(false);
   const form = useForm({
@@ -45,8 +44,10 @@ export default function Home() {
         email,
         password
       ).catch((error) => {
+        console.log("eror", error);
         const errorCode = error.code;
         const errorMessage = error.message;
+        return
       });
 
       console.log("final", user);
