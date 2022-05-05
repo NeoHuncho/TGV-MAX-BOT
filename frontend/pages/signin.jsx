@@ -11,7 +11,7 @@ export default function Home() {
   const auth = getAuth();
   auth.onAuthStateChanged(function (user) {
     console.log(user);
-    if (user?.uid) return router.push("trains");
+    if (user?.uid) return router.push("/trains");
   });
   const router = useRouter();
   const [loading, setLoading] = useState(false);
