@@ -1,11 +1,13 @@
 import axios from "axios-https-proxy-fix";
+import { getFirestore } from "firebase-admin/firestore";
 import proxyManager from "proxy-manager";
-import { writeFile } from "fs/promises";
+import { readFile, writeFile } from "fs/promises";
 
 import moment from "moment";
+import initFirebase from "./initFirebase.js";
 
 const parseProxy = (proxy) => {
-  const object = {
+  const file = {
     //   protocol: "https",
     //   host: "152.44.97.146",
     //   port: 8000,
@@ -22,7 +24,7 @@ const parseProxy = (proxy) => {
     },
   };
 
-  return object;
+  return file;
 };
 
 const proxies = new proxyManager("proxies.txt");
@@ -53,6 +55,17 @@ const makeRequest = async (url) => {
       return { data: [] };
     }
   }
+};
+
+const parseDayNumber = (dayNumber) => {
+  console.log(dayNumber);
+  if (dayNumber == 0) return "Dimanche";
+  if (dayNumber == 1) return "Lundi";
+  if (dayNumber == 2) return "Mardi";
+  if (dayNumber == 3) return "Mercredi";
+  if (dayNumber == 4) return "Jeudi";
+  if (dayNumber == 5) return "Vendredi";
+  if (dayNumber == 6) return "Samedi";
 };
 
 const filterNonPairedTrains = (trainsData) => {
@@ -163,7 +176,35 @@ const getRelevantTrains = async (location, days) => {
   return sortedTrainsData;
 };
 
+const formatTrainsForFirebase = (file) => {
+  for (const key in file) {
+    for (const week in file[key]) {
+      let firstDay = null;
+      let lastDay = null;
+      Object.keys(file[key][week]).map((day, index) => {
+        if (index == 0) firstDay = day;
+        if (index == Object.keys(file[key][week]).length - 1) lastDay = day;
+      });
+      for (const day in file[key][week]) {
+        const fixedDate = moment(day, "DD-MM-YYYY").format("YYYY-MM-DD");
+        file[key][week][parseDayNumber(moment(fixedDate).weekday())] =
+          file[key][week][day];
+        delete file[key][week][day];
+      }
+
+      file[key][firstDay + " au " + lastDay] = file[key][week];
+      delete file[key][week];
+    }
+    file[key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()] = file[key];
+    delete file[key];
+  }
+  return file;
+};
+
 const getTrains = async (origin) => {
+  initFirebase();
+  const fireStore = getFirestore();
+
   const trainsData = {};
   const originDestinations = (
     await makeRequest(
@@ -176,7 +217,7 @@ const getTrains = async (origin) => {
       { departure: origin, destination: originDestinations[index] },
       { departure: [4, 5], return: [6, 0] }
     );
-    if (Object.keys(trains).length > 0) {
+    if (file.keys(trains).length > 0) {
       trainsData[originDestinations[index]] = trains;
     }
 
@@ -184,6 +225,22 @@ const getTrains = async (origin) => {
   }
   console.log("totalErrors: ", totalErrors);
 };
-getTrains("PARIS (intramuros)");
-getTrains("LILLE FLANDRES");
-getTrains("LILLE EUROPE");
+// getTrains("PARIS (intramuros)");
+// getTrains("LILLE FLANDRES");
+// getTrains("LILLE EUROPE");
+
+const runTest = async () => {
+  initFirebase();
+  const fireStore = getFirestore();
+  const parisTrains = JSON.parse(
+    await readFile("./outputs/PARIS (intramuros).json")
+  );
+  const lilleFlandresTrains = JSON.parse(
+    await readFile("./outputs/LILLE FLANDRES.json")
+  );
+  const lilleEuropeTrains = JSON.parse(
+    await readFile("./outputs/LILLE EUROPE.json")
+  );
+  console.log(formatTrainsForFirebase(parisTrains));
+};
+runTest();
