@@ -5,15 +5,18 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import styles from "@pages/styles/signin.module.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  useEffect(() => {
+    auth.onAuthStateChanged(function (user) {
+      console.log(user);
+      if (user?.uid) return router.push("/trains");
+    });
+  }, []);
+
   const auth = getAuth();
   const router = useRouter();
-  auth.onAuthStateChanged(function (user) {
-    console.log(user);
-    if (user?.uid) return router.push("/trains");
-  });
 
   const [loading, setLoading] = useState(false);
   const form = useForm({
