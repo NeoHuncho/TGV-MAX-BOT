@@ -24,6 +24,7 @@
     "firebase-admin": "^10.1.0",
     "https": "^1.0.0",
     "https-proxy-agent": "^5.0.1",
+    "json-size": "^1.0.0",
     "moment": "^2.29.3",
     "proxy-manager": "^1.0.0",
     "request": "^2.88.2"

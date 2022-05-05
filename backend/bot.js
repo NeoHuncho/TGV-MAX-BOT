@@ -2,7 +2,7 @@ import axios from "axios-https-proxy-fix";
 import { getFirestore } from "firebase-admin/firestore";
 import proxyManager from "proxy-manager";
 import { readFile, writeFile } from "fs/promises";
-
+import jsonSize from "json-size";
 import moment from "moment";
 import initFirebase from "./initFirebase.js";
 
@@ -58,7 +58,6 @@ const makeRequest = async (url) => {
 };
 
 const parseDayNumber = (dayNumber) => {
-  console.log(dayNumber);
   if (dayNumber == 0) return "Dimanche";
   if (dayNumber == 1) return "Lundi";
   if (dayNumber == 2) return "Mardi";
@@ -67,6 +66,9 @@ const parseDayNumber = (dayNumber) => {
   if (dayNumber == 5) return "Vendredi";
   if (dayNumber == 6) return "Samedi";
 };
+
+const toFirstUpperCase = (string) =>
+  string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 
 const filterNonPairedTrains = (trainsData) => {
   trainsData.departure = trainsData.departure.filter((train) => {
@@ -195,7 +197,7 @@ const formatTrainsForFirebase = (file) => {
       file[key][firstDay + " au " + lastDay] = file[key][week];
       delete file[key][week];
     }
-    file[key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()] = file[key];
+    file[toFirstUpperCase(key)] = file[key];
     delete file[key];
   }
   return file;
@@ -220,27 +222,13 @@ const getTrains = async (origin) => {
     if (file.keys(trains).length > 0) {
       trainsData[originDestinations[index]] = trains;
     }
-
-    await writeFile(origin + ".json", JSON.stringify(trainsData));
+    await fireStore
+      .collection("trains")
+      .doc(toFirstUpperCase(origin))
+      .set(formatTrainsForFirebase(trainsData));
   }
   console.log("totalErrors: ", totalErrors);
 };
-// getTrains("PARIS (intramuros)");
-// getTrains("LILLE FLANDRES");
-// getTrains("LILLE EUROPE");
-
-const runTest = async () => {
-  initFirebase();
-  const fireStore = getFirestore();
-  const parisTrains = JSON.parse(
-    await readFile("./outputs/PARIS (intramuros).json")
-  );
-  const lilleFlandresTrains = JSON.parse(
-    await readFile("./outputs/LILLE FLANDRES.json")
-  );
-  const lilleEuropeTrains = JSON.parse(
-    await readFile("./outputs/LILLE EUROPE.json")
-  );
-  console.log(formatTrainsForFirebase(parisTrains));
-};
-runTest();
+getTrains("PARIS (intramuros)");
+getTrains("LILLE FLANDRES");
+getTrains("LILLE EUROPE");
