@@ -536,7 +536,7 @@
   "resolved" "https://registry.npmjs.org/@mantine/form/-/form-4.2.2.tgz"
   "version" "4.2.2"
 
-"@mantine/hooks@4.2.2":
+"@mantine/hooks@^4.2.2", "@mantine/hooks@4.2.2":
   "integrity" "sha512-H580XCbgH0UnmaiHOvWGGFcFpNnXwl3zFTFLAH8fhp80AeLhIoYdI9+kvbg4G69UZlZrhr1h9naWCN9O8gjizg=="
   "resolved" "https://registry.npmjs.org/@mantine/hooks/-/hooks-4.2.2.tgz"
   "version" "4.2.2"
