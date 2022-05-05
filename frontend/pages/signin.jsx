@@ -12,7 +12,6 @@ export default function Home() {
   const router = useRouter();
   useEffect(() => {
     auth.onAuthStateChanged(function (user) {
-      console.log("useEffect", user);
       if (user?.uid) return router.push("/trains");
     });
   }, []);
@@ -44,14 +43,16 @@ export default function Home() {
         email,
         password
       ).catch((error) => {
-        console.log("eror", error);
         const errorCode = error.code;
         const errorMessage = error.message;
-        return
+        console.log(errorCode);
+        if (errorCode.includes("user-not-found"))
+          form.setFieldError("email", "Utilisateur introuvable");
+        else if (errorCode.includes("wrong-password"))
+          form.setFieldError("password", "Mot de passe incorrect");
+        setLoading(false);
       });
-
-      console.log("final", user);
-      router.push("/trains");
+      if (user) return router.push("/trains");
     }
   };
 
@@ -72,6 +73,7 @@ export default function Home() {
         <TextInput
           required
           label="Email"
+          type="email"
           styles={{ label: { color: "white" } }}
           {...form.getInputProps("email")}
         />
