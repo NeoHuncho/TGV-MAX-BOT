@@ -1,7 +1,7 @@
 import { TextInput, PasswordInput, Title, Button } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import Head from "next/head";
-import Image from "next/image";
+
 import { useRouter } from "next/router";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import styles from "@pages/styles/signin.module.scss";
@@ -9,11 +9,12 @@ import { useState } from "react";
 
 export default function Home() {
   const auth = getAuth();
+  const router = useRouter();
   auth.onAuthStateChanged(function (user) {
     console.log(user);
     if (user?.uid) return router.push("/trains");
   });
-  const router = useRouter();
+
   const [loading, setLoading] = useState(false);
   const form = useForm({
     initialValues: {
