@@ -13,7 +13,7 @@ export default function Home() {
       console.log(user);
       if (user?.uid) return router.push("/trains");
     });
-  }, []);
+  });
 
   const auth = getAuth();
   const router = useRouter();

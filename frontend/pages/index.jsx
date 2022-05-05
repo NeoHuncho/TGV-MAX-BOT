@@ -13,7 +13,7 @@ export default function Home() {
       if (user?.uid) return router.push("/trains");
       else return router.push("/signin");
     });
-  }, []);
+  });
 
   if (loading) return <p>Loading...</p>;
 }
