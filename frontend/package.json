@@ -12,6 +12,7 @@
     "@mantine/core": "^4.2.2",
     "@mantine/form": "^4.2.2",
     "@mantine/hooks": "^4.2.2",
+    "@netlify/plugin-nextjs": "^4.7.0",
     "@zeit/next-sass": "^1.0.1",
     "firebase": "^9.7.0",
     "moment": "^2.29.3",
