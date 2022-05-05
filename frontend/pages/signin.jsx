@@ -10,10 +10,10 @@ import { useEffect, useState } from "react";
 export default function Home() {
   useEffect(() => {
     auth.onAuthStateChanged(function (user) {
-      console.log(user);
+      console.log("useEffect", user);
       if (user?.uid) return router.push("/trains");
     });
-  });
+  }, []);
 
   const auth = getAuth();
   const router = useRouter();
@@ -49,7 +49,7 @@ export default function Home() {
         const errorMessage = error.message;
       });
 
-      console.log(user);
+      console.log("final", user);
       router.push("/trains");
     }
   };
