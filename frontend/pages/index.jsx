@@ -9,7 +9,6 @@ export default function Home() {
   const auth = getAuth();
   useEffect(() => {
     auth.onAuthStateChanged(function (user) {
-      console.log(user, user?.uid);
       if (user?.uid) return router.push("/trains");
       else return router.push("/signin");
     });

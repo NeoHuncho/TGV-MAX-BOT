@@ -3,7 +3,7 @@ import { initializeApp } from "firebase/app";
 import "firebase/app";
 import "firebase/auth";
 import { Fuego, FuegoProvider } from "swr-firestore-v9";
-
+import { MantineProvider } from "@mantine/core";
 const firebaseConfig = {
   apiKey: "AIzaSyBOgUowl906XNZKkpKHOYl3d_XCQ3Jw528",
   authDomain: "tgv-max-weekends.firebaseapp.com",
@@ -19,7 +19,13 @@ initializeApp(firebaseConfig);
 function MyApp({ Component, pageProps }) {
   return (
     <FuegoProvider fuego={fuego}>
-      <Component {...pageProps} />
+      <MantineProvider
+        theme={{ colorScheme: "dark" }}
+        withGlobalStyles
+        withNormalizeCSS
+      >
+        <Component {...pageProps} />
+      </MantineProvider>
     </FuegoProvider>
   );
 }

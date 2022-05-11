@@ -4,10 +4,10 @@ import Head from "next/head";
 
 import { useRouter } from "next/router";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import styles from "@pages/styles/signin.module.scss";
 import { useEffect, useState } from "react";
+import Radium from "radium";
 
-export default function Home() {
+function SignIn() {
   const auth = getAuth();
   const router = useRouter();
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function Home() {
   };
 
   return (
-    <div className={styles.container}>
+    <div style={styles.container}>
       <Head>
         <title>Crypto Portfolio</title>
         <meta name="description" content="Welcome to TGV Max Weekends" />
@@ -65,7 +65,7 @@ export default function Home() {
       </Head>
 
       <div>
-        <Title order={1} className={styles.title}>
+        <Title order={1} style={styles.title}>
           {" "}
           TGV Max Weekends
         </Title>
@@ -86,7 +86,7 @@ export default function Home() {
         />
         <Button
           onClick={signInUser}
-          className={styles.signin_button}
+          style={styles.signin_button}
           loading={loading}
         >
           Sign In
@@ -95,3 +95,26 @@ export default function Home() {
     </div>
   );
 }
+
+const styles = {
+  container: {
+    height: "100vh",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  title: {
+    color: "white",
+    fontSize: "2rem",
+    fontWeight: "bold",
+
+    marginBottom: "20px",
+  },
+  signin_button: {
+    width: "100%",
+    marginTop: "40px",
+  },
+};
+
+export default Radium(SignIn);
