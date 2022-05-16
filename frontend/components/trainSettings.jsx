@@ -3,8 +3,7 @@ import React, { useState } from "react";
 import { Title, Button, Text } from "@mantine/core";
 import Image from "next/image";
 
-import DepartureCheckbox from "./trips/departureCheckbox.jsx";
-import Trips from "./trips/trips.jsx";
+import Trips from "./trips.jsx";
 function TrainSettings() {
   const [showBotSettings, setShowBotSettings] = useState(false);
 

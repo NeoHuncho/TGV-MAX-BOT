@@ -6,6 +6,7 @@ import jsonSize from "json-size";
 import moment from "moment";
 import initFirebase from "./initFirebase.js";
 import { resolve } from "path";
+import toFirstUpperCase from "./utils/toFirstUpperCase.js";
 
 initFirebase();
 const fireStore = getFirestore();
@@ -72,9 +73,6 @@ const parseDayNumber = (dayNumber) => {
   if (dayNumber == 6) return "Samedi";
 };
 
-const toFirstUpperCase = (string) =>
-  string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-
 const updateTrips = async () => {
   const data =
     (await fireStore.collection("admin").doc("botSettings").get()).data() ||
@@ -108,8 +106,8 @@ const updateTrips = async () => {
           date2.weekNumber === date.weekNumber
         ) {
           trips.push({
-            departureDate: [date.date],
-            returnDate: [date2.date],
+            departureDates: [date.date],
+            returnDates: [date2.date],
             maxDeparture: date.date,
             maxReturn: date2.date,
             departures: {
@@ -123,6 +121,7 @@ const updateTrips = async () => {
                 enabled: true,
               },
             },
+            id: date.date+'.'+date2.date,
           });
         }
       });
@@ -274,7 +273,6 @@ const formatTrainsForFirebase = (file) => {
 const getTrains = async () => {
   const botData = await updateTrips();
   botData.departures.forEach(async (origin) => {
-    if (origin === "PARIS (intramuros)") return;
     console.log(origin);
     const trainsData = {};
     const originDestinations = (
@@ -287,8 +285,8 @@ const getTrains = async () => {
       const trains = await getRelevantTrains(
         { departure: origin, destination: originDestinations[index] },
         {
-          departure: botData.trips.map((trip) => trip.departureDate).flat(),
-          return: botData.trips.map((trip) => trip.returnDate).flat(),
+          departure: botData.trips.map((trip) => trip.departureDates).flat(),
+          return: botData.trips.map((trip) => trip.returnDates).flat(),
         }
       );
       if (Object.keys(trains).length > 0) {

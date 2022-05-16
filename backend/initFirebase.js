@@ -3,6 +3,7 @@ import admin from "firebase-admin";
 const initFirebase = () => {
   return admin.initializeApp({
     credential: admin.credential.cert(service_account),
+    databaseURL: "https://tgv-max-weekends-default-rtdb.europe-west1.firebasedatabase.app/"
   });
 };
 const service_account = {
