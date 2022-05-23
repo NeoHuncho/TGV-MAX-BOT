@@ -891,6 +891,11 @@
     "@typescript-eslint/types" "5.22.0"
     "eslint-visitor-keys" "^3.0.0"
 
+"@use-it/event-listener@^0.1.2":
+  "integrity" "sha512-hgfExDzUU9uTRTPDCpw2s9jWTxcxmpJya3fK5ADpf5VDpSy8WYwY/kh28XE0tUcbsljeP8wfan48QvAQTSSa3Q=="
+  "resolved" "https://registry.npmjs.org/@use-it/event-listener/-/event-listener-0.1.7.tgz"
+  "version" "0.1.7"
+
 "@vercel/node-bridge@^2.1.0":
   "integrity" "sha512-GJdBio0nKyxvFwfLcj6CMp2s22d5V6K9tmhmHkQcaiFwdKWK/Pa7jngiO84a09fvX+DFaOtpalJuxQa5LAJ9xQ=="
   "resolved" "https://registry.npmjs.org/@vercel/node-bridge/-/node-bridge-2.2.1.tgz"
@@ -5729,6 +5734,11 @@
     "inline-style-prefixer" "^4.0.0"
     "prop-types" "^15.5.8"
 
+"random-id@^1.0.4":
+  "integrity" "sha512-78QU7sgk2uUsXDu5B/CV8R2ee6yAWDhJxvYPCLNXDD2EIdjb7vOLNXEm4S6//s++u4hAkH7umdq+usngpcTSeA=="
+  "resolved" "https://registry.npmjs.org/random-id/-/random-id-1.0.4.tgz"
+  "version" "1.0.4"
+
 "randombytes@^2.0.0", "randombytes@^2.0.1", "randombytes@^2.0.5", "randombytes@^2.1.0":
   "integrity" "sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ=="
   "resolved" "https://registry.npmjs.org/randombytes/-/randombytes-2.1.0.tgz"
@@ -7039,6 +7049,13 @@
   "version" "1.2.1"
   dependencies:
     "use-isomorphic-layout-effect" "^1.1.1"
+
+"use-persisted-state@^0.3.3":
+  "integrity" "sha512-pCNlvYC8+XjRxwnIut4teGC9f2p9aD88R8OGseQGZa2dvqG/h1vEGk1vRE1IZG0Vf161UDpn+NlW4+UGubQflQ=="
+  "resolved" "https://registry.npmjs.org/use-persisted-state/-/use-persisted-state-0.3.3.tgz"
+  "version" "0.3.3"
+  dependencies:
+    "@use-it/event-listener" "^0.1.2"
 
 "use@^3.1.0":
   "integrity" "sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ=="

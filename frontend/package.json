@@ -20,10 +20,12 @@
     "moment": "^2.29.3",
     "next": "12.1.6",
     "radium": "^0.26.2",
+    "random-id": "^1.0.4",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "sass": "^1.51.0",
-    "swr-firestore-v9": "^1.0.5"
+    "swr-firestore-v9": "^1.0.5",
+    "use-persisted-state": "^0.3.3"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.7",

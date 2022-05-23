@@ -20,7 +20,12 @@ const IndexTrip = ({ currentTrip, trips }) => {
   const [returnDates, setReturnDates] = useState([false, null]);
   useEffect(() => {
     if (currentTrip) {
-      setDepartures((departures) => [departures[0], currentTrip.departures]);
+      setDepartures((departures) => [
+        departures[0],
+        Object.keys(currentTrip.departures)
+          .sort()
+          .reduce((r, k) => ((r[k] = currentTrip.departures[k]), r), {}),
+      ]);
       setTripDates((tripDate) => [
         tripDate[0],
         [currentTrip.maxDeparture, currentTrip.maxReturn],
@@ -53,7 +58,7 @@ const IndexTrip = ({ currentTrip, trips }) => {
       departures: departures[1],
       departureDates: departureDates[1],
       returnDates: returnDates[1],
-      id: `${tripDates[1][0]}.${tripDates[1][1]}`,
+      id: currentTrip.id,
     };
 
     if (
@@ -76,16 +81,14 @@ const IndexTrip = ({ currentTrip, trips }) => {
       console.log("updating");
       update(
         {
-          trips: trips.map((trip) => {
-            if (trip.id === currentTrip.id) {
-              let found = false;
-              trips.map((trip) => {
-                if (trip.id === newTrip.id) found = true;
-              });
-              if (!found) return { ...newTrip };
-            }
-            return trip;
-          }),
+          trips: trips
+            .map((trip) => {
+              if (trip.id === currentTrip.id) {
+                return { ...newTrip };
+              }
+              return trip;
+            })
+            .sort((a, b) => (a.maxReturn > b.maxReturn ? 1 : -1)),
         },
         { merge: true }
       );
@@ -94,7 +97,7 @@ const IndexTrip = ({ currentTrip, trips }) => {
 
   return (
     <div style={styles.selectedTripContainer}>
-      {currentTrip.id !== "new" ? (
+      {currentTrip.maxDeparture !== "JJ-MM-AAAA" ? (
         <Title align="center">
           {`${moment(currentTrip.maxDeparture).format("DD-MM-YYYY")} - 
         ${moment(currentTrip.maxReturn).format("DD-MM-YYYY")}`}
@@ -118,7 +121,7 @@ const IndexTrip = ({ currentTrip, trips }) => {
             >
               Changer date de debut/fin
             </Button>
-            {(tripDates[0] || currentTrip.id === "new") && (
+            {(tripDates[0] || currentTrip.maxDeparture === "JJ-MM-AAAA") && (
               <TrainCalendar
                 tripDates={tripDates}
                 setTripDates={setTripDates}

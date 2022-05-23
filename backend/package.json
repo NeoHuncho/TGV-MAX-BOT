@@ -27,6 +27,7 @@
     "json-size": "^1.0.0",
     "moment": "^2.29.3",
     "proxy-manager": "^1.0.0",
+    "random-id": "^1.0.4",
     "request": "^2.88.2"
   }
 }

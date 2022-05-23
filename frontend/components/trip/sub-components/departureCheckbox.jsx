@@ -1,9 +1,8 @@
 import Radium from "radium";
-import React, { useEffect } from "react";
+import React from "react";
 import { useDocument } from "swr-firestore-v9";
 import { Checkbox } from "@mantine/core";
 const departureCheckbox = ({ departures, setDepartures }) => {
-  useEffect(() => {}, [departures]);
   return (
     <div style={styles.container}>
       {Object.entries(departures[1]).map(([key, value]) => (

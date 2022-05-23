@@ -1,13 +1,13 @@
 import axios from "axios-https-proxy-fix";
 import { getFirestore } from "firebase-admin/firestore";
 import proxyManager from "proxy-manager";
-import { readFile, writeFile } from "fs/promises";
+import { appendFile, readFile, writeFile } from "fs/promises";
 import jsonSize from "json-size";
 import moment from "moment";
 import initFirebase from "./initFirebase.js";
 import { resolve } from "path";
 import toFirstUpperCase from "./utils/toFirstUpperCase.js";
-
+import randomID from "random-id";
 initFirebase();
 const fireStore = getFirestore();
 const parseProxy = (proxy) => {
@@ -33,14 +33,20 @@ const parseProxy = (proxy) => {
 
 const proxies = new proxyManager("proxies.txt");
 const todaysDate = moment().format("YYYY-MM-DD");
+const nextMonth = moment().add(1, "M").startOf("M").format("YYYY-MM-DD");
 
 let totalErrors = 0;
 let currentProxy = parseProxy(proxies.getRandomProxy().toString());
 let totalRequests = 0;
 
+const logToFile = async (type, string) => {
+  await appendFile("./log/" + type + ".txt", `${moment()}--  ${string}\n`);
+};
+
 const makeRequest = async (url) => {
   totalRequests++;
-  console.log(totalRequests);
+  if (totalRequests % 100 === 0) await logToFile("general", totalRequests);
+
   try {
     return await axios.get(url, {
       proxy: {
@@ -51,9 +57,7 @@ const makeRequest = async (url) => {
     try {
       currentProxy = parseProxy(proxies.getRandomProxy().toString());
 
-      await new Promise((resolve) =>
-        setTimeout(resolve, Math.random() * 10000)
-      );
+      await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
 
       return await axios.get(url, { proxy: { ...currentProxy } });
     } catch (error) {
@@ -88,70 +92,102 @@ const updateTrips = async () => {
   });
   if (!closestDate) closestDate = moment().subtract(2, "m");
 
-  const dates = (
-    await makeRequest(
-      `https://sncf-simulateur-api-prod.azurewebsites.net/api/Calendar/PARIS (intramuros)/LILLE FLANDRES/0/${todaysDate}`
-    )
-  ).data;
-
-  dates.map((date) => {
+  const addTripData = (dates, date) => {
     if (
       moment(date.date) > moment(todaysDate) &&
       moment(date.date).weekday() === 5 &&
-      moment(date.date) > moment(closestDate)
+      moment(date.date) > moment(closestDate) &&
+      date.availability > 0
     ) {
       dates.map((date2) => {
         if (
           moment(date2.date).weekday() === 0 &&
-          date2.weekNumber === date.weekNumber
+          date2.weekNumber === date.weekNumber &&
+          date2.availability > 0
         ) {
-          trips.push({
-            departureDates: [date.date],
-            returnDates: [date2.date],
-            maxDeparture: date.date,
-            maxReturn: date2.date,
-            departures: {
-              "PARIS (intramuros)": {
-                enabled: true,
+          if (
+            trips.filter(
+              (trip) =>
+                trip.maxReturn === date2.date && trip.maxDeparture === date.date
+            ).length === 0
+          )
+            trips.push({
+              departureDates: [date.date],
+              returnDates: [date2.date],
+              maxDeparture: date.date,
+              maxReturn: date2.date,
+              departures: {
+                "LILLE EUROPE": {
+                  enabled: true,
+                },
+                "LILLE FLANDRES": {
+                  enabled: true,
+                },
+                "PARIS (intramuros)": {
+                  enabled: true,
+                },
               },
-              "LILLE FLANDRES": {
-                enabled: true,
-              },
-              "LILLE EUROPE": {
-                enabled: true,
-              },
-            },
-            id: date.date+'.'+date2.date,
-          });
+              id: randomID(5),
+            });
         }
       });
     }
-  });
+  };
 
-  await fireStore.collection("admin").doc("botSettings").set(
-    {
-      trips: trips,
-    },
-    { merge: true }
-  );
+  const dates = (
+    await makeRequest(
+      `https://sncf-simulateur-api-prod.azurewebsites.net/api/Calendar/PARIS%20(intramuros)/MARSEILLE%20BLANCARDE/0/${todaysDate}`
+    )
+  ).data;
+
+  const nextMonthdates = (
+    await makeRequest(
+      `https://sncf-simulateur-api-prod.azurewebsites.net/api/Calendar/PARIS%20(intramuros)/MARSEILLE%20BLANCARDE/0/${nextMonth}`
+    )
+  ).data;
+
+  dates.map((date) => addTripData(dates, date));
+  nextMonthdates.map((date) => addTripData(nextMonthdates, date));
+
+  await fireStore
+    .collection("admin")
+    .doc("botSettings")
+    .set(
+      {
+        trips: trips.sort((a, b) => (a.maxReturn > b.maxReturn ? 1 : -1)),
+      },
+      { merge: true }
+    );
   return { ...data, trips: trips };
 };
 
 const filterNonPairedTrains = (trainsData) => {
-  trainsData.departure = trainsData.departure.filter((train) => {
-    let found = false;
-    trainsData.return.map((train2) => {
-      if (train.weekNumber === train2.weekNumber) found = true;
-    });
-    return found;
-  });
-  trainsData.return = trainsData.return.filter((train) => {
-    let found = false;
-    trainsData.departure.map((train2) => {
-      if (train.weekNumber === train2.weekNumber) found = true;
-    });
-    return found;
-  });
+  trainsData.departure = trainsData.departure
+    .filter((train) => {
+      let found = false;
+      trainsData.return.map((train2) => {
+        if (train.weekNumber === train2.weekNumber) found = true;
+      });
+
+      return found;
+    })
+    .filter(
+      (value, index, self) =>
+        index === self.findIndex((t) => t.date === value.date)
+    );
+  trainsData.return = trainsData.return
+    .filter((train) => {
+      let found = false;
+      trainsData.departure.map((train2) => {
+        if (train.weekNumber === train2.weekNumber) found = true;
+      });
+
+      return found;
+    })
+    .filter(
+      (value, index, self) =>
+        index === self.findIndex((t) => t.date === value.date)
+    );
   return trainsData;
 };
 
@@ -159,7 +195,7 @@ const getRelevantTrains = async (location, days) => {
   let trainsData = {};
   trainsData.departure = (
     await makeRequest(
-      `https://sncf-simulateur-api-prod.azurewebsites.net/api/Calendar/${location.depature}/${location.destination}/0/${todaysDate}`
+      `https://sncf-simulateur-api-prod.azurewebsites.net/api/Calendar/${location.departure}/${location.destination}/0/${todaysDate}`
     )
   ).data.filter(
     (train) =>
@@ -177,7 +213,35 @@ const getRelevantTrains = async (location, days) => {
       train.availability > 0 &&
       days.return.includes(train.date)
   );
+  trainsData.departure.push(
+    (
+      await makeRequest(
+        `https://sncf-simulateur-api-prod.azurewebsites.net/api/Calendar/${location.departure}/${location.destination}/0/${nextMonth}`
+      )
+    ).data.filter(
+      (train) =>
+        moment(train.date) > moment().subtract(1, "d") &&
+        train.availability > 0 &&
+        days.departure.includes(train.date)
+    )
+  );
+
+  trainsData.return.push(
+    (
+      await makeRequest(
+        `https://sncf-simulateur-api-prod.azurewebsites.net/api/Calendar/${location.destination}/${location.departure}/0/${nextMonth}`
+      )
+    ).data.filter(
+      (train) =>
+        moment(train.date) > moment().subtract(1, "d") &&
+        train.availability > 0 &&
+        days.return.includes(train.date)
+    )
+  );
+  trainsData.departure = trainsData.departure.flat();
+  trainsData.return = trainsData.return.flat();
   trainsData = filterNonPairedTrains(trainsData);
+
   const departureTrains = trainsData.departure.map(async (day, index) => {
     trainsData.departure[index].trains = [];
     (
@@ -256,8 +320,12 @@ const formatTrainsForFirebase = (file) => {
       });
       for (const day in file[key][week]) {
         const fixedDate = moment(day, "DD-MM-YYYY").format("YYYY-MM-DD");
-        file[key][week][parseDayNumber(moment(fixedDate).weekday())] =
-          file[key][week][day];
+        file[key][week][
+          `${parseDayNumber(moment(fixedDate).weekday())} (${moment(
+            day,
+            "DD-MM-YYYY"
+          ).format("DD-MM-YYYY")})`
+        ] = file[key][week][day];
         delete file[key][week][day];
       }
 
@@ -267,41 +335,96 @@ const formatTrainsForFirebase = (file) => {
     file[toFirstUpperCase(key)] = file[key];
     delete file[key];
   }
+  for (const key in file) {
+    file[key] = Object.keys(file[key])
+      .sort((a, b) => {
+        return new Date(b.substring(0, 10)) - new Date(a.substring(0, 10));
+      })
+      .reduce((r, k) => ((r[k] = file[key][k]), r), {});
+  }
+
   return file;
 };
 
 const getTrains = async () => {
+  await logToFile("general", "-----START-----");
+  const startDate = moment();
+  await fireStore
+    .collection("admin")
+    .doc("botSettings")
+    .set({ running: true }, { merge: true });
   const botData = await updateTrips();
-  botData.departures.forEach(async (origin) => {
-    console.log(origin);
-    const trainsData = {};
-    const originDestinations = (
-      await makeRequest(
-        "https://sncf-simulateur-api-prod.azurewebsites.net/api/Stations/Destinations/" +
-          origin
-      )
-    ).data;
-    for (const index in originDestinations) {
-      const trains = await getRelevantTrains(
-        { departure: origin, destination: originDestinations[index] },
-        {
-          departure: botData.trips.map((trip) => trip.departureDates).flat(),
-          return: botData.trips.map((trip) => trip.returnDates).flat(),
-        }
-      );
-      if (Object.keys(trains).length > 0) {
-        trainsData[originDestinations[index]] = trains;
-      }
-    }
+  const promises = [];
+  botData.departures.forEach((origin) => {
+    promises.push(
+      new Promise(async (resolve) => {
+        const trainsData = {};
+        const originDestinations = (
+          await makeRequest(
+            "https://sncf-simulateur-api-prod.azurewebsites.net/api/Stations/Destinations/" +
+              origin
+          )
+        ).data;
+        for (const index in originDestinations) {
+          const departureDates = botData.trips
+            .map((trip) =>
+              trip.departures[origin]?.enabled ? trip.departureDates : null
+            )
+            .flat()
+            .filter((date) => date);
 
-    await fireStore
-      .collection("trains")
-      .doc(toFirstUpperCase(origin))
-      .set(formatTrainsForFirebase(trainsData))
-      .catch((error) => console.log(error))
-      .then(() => console.log("done" + origin));
-    console.log("totalErrors: ", totalErrors);
+          const returnDates = botData.trips
+            .map((trip) =>
+              trip.departures[origin]?.enabled ? trip.returnDates : null
+            )
+            .flat()
+            .filter((date) => date);
+
+          if (departureDates.length !== 0 && returnDates.length !== 0) {
+            const trains = await getRelevantTrains(
+              { departure: origin, destination: originDestinations[index] },
+              {
+                departure: departureDates,
+                return: returnDates,
+              }
+            );
+            if (Object.keys(trains).length > 0) {
+              trainsData[originDestinations[index]] = trains;
+            }
+          }
+        }
+        await writeFile(
+          "./outputs/" + origin + ".json",
+          JSON.stringify(trainsData)
+        );
+        await fireStore
+          .collection("trains")
+          .doc(toFirstUpperCase(origin))
+          .set(formatTrainsForFirebase(trainsData))
+          .catch(async (error) => await logToFile("errors", error));
+
+        if (totalErrors)
+          await logToFile("errors", "Errors found in Requests: " + totalErrors);
+        resolve();
+      })
+    );
   });
+
+  await Promise.all(promises);
+  await fireStore
+    .collection("admin")
+    .doc("botSettings")
+    .set(
+      { lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"), running: false },
+      { merge: true }
+    );
+  await logToFile(
+    "general",
+    `total Running Time:  ${moment().diff(startDate, "minutes")} minutes`
+  );
+
+  await logToFile("general", "-----END-----");
+  process.exit(1);
 };
 
 getTrains();

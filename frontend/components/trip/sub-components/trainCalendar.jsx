@@ -54,7 +54,8 @@ function TrainCalendar({
                     formatToDate(dates[0]) + "T00:00:00"
                 )
                 .filter((array) => array.length > 0),
-          ],
+          ].filter((array) => array && array.length > 0),
+          ,
         ];
       });
       setReturnDates((returnDates) => [
@@ -62,15 +63,13 @@ function TrainCalendar({
         [
           formatToDate(dates[1]) + "T00:00:00",
           returnDates[1] &&
-            returnDates[1]
-              .filter(
-                (date) =>
-                  formatToDate(dates[1]) + "T00:00:00" >=
-                  date >=
-                  formatToDate(dates[0]) + "T00:00:00"
-              )
-              .filter((array) => array.length > 0),
-        ],
+            returnDates[1].filter(
+              (date) =>
+                formatToDate(dates[1]) + "T00:00:00" >=
+                date >=
+                formatToDate(dates[0]) + "T00:00:00"
+            ),
+        ].filter((array) => array && array.length > 0),
       ]);
       setChanged(false);
     }

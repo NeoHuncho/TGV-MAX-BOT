@@ -5,7 +5,7 @@ import { Button, Text, Title } from "@mantine/core";
 import { useDocument } from "swr-firestore-v9";
 import moment from "moment";
 import Image from "next/image";
-
+import randomID from "random-id";
 import TripIndex from "./trip/trip";
 const Trips = () => {
   const { data, update } = useDocument(`admin/botSettings`, {
@@ -20,7 +20,7 @@ const Trips = () => {
   useEffect(() => {
     if (newTrip && trips) {
       trips.map((trip) => {
-        if (trip.id === "new") {
+        if (trip.maxDeparture === "JJ-MM-AAAA") {
           setCurrentTrip(trip);
         }
         setNewTrip(false);
@@ -53,7 +53,7 @@ const Trips = () => {
   const createNewTrip = async () => {
     let found = false;
     data.trips.map((trip) => {
-      if (trip.id === "new") {
+      if (trip.maxDeparture === "JJ-MM-AAAA") {
         found = true;
         setNewTrip(true);
       }
@@ -66,7 +66,7 @@ const Trips = () => {
           {
             maxDeparture: "JJ-MM-AAAA",
             maxReturn: "JJ-MM-AAAA",
-            id: "new",
+            id: randomID(5),
             departures: {
               "LILLE EUROPE": {
                 enabled: true,
@@ -79,17 +79,17 @@ const Trips = () => {
               },
             },
           },
-        ],
+        ].sort((a, b) => (a.maxReturn > b.maxReturn ? 1 : -1)),
       });
     setNewTrip(true);
   };
-
+  console.log(1, currentTrip);
   return (
     <div style={styles.container}>
       <div style={styles.tripsContainer}>
-        {trips.map((trip) => {
+        {trips.map((trip, key) => {
           return (
-            <div style={styles.tripContainer}>
+            <div key={key} style={styles.tripContainer}>
               <Image
                 onClick={() => deleteCurrentTrip(trip)}
                 src="/icons/cross.svg"
