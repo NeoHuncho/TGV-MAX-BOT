@@ -42,7 +42,13 @@ const TrainList = () => {
                             new Date(a.substring(0, 10))
                         )
                         .reduce((r, k) => ((r[k] = trips[k]), r), {});
-                      return <Train destination={destination} trips={trips} />;
+                      return (
+                        <Train
+                          key={destination}
+                          destination={destination}
+                          trips={trips}
+                        />
+                      );
                     })}
                 </div>
               </div>
