@@ -17,6 +17,7 @@
     "@zeit/next-sass": "^1.0.1",
     "dayjs": "^1.11.2",
     "firebase": "^9.7.0",
+    "lodash": "^4.17.21",
     "moment": "^2.29.3",
     "next": "12.1.6",
     "radium": "^0.26.2",

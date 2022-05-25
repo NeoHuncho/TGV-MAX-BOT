@@ -1,10 +1,10 @@
 import React from "react";
 import Radium from "radium";
 import { useEffect, useState } from "react";
-import { Button, Text, Title } from "@mantine/core";
+import { Button, Text, Title, Checkbox } from "@mantine/core";
 import { useDocument } from "swr-firestore-v9";
 import moment from "moment";
-
+import lodash from "lodash";
 import TrainCalendar from "./sub-components/trainCalendar";
 import DepartureCheckbox from "./sub-components/departureCheckbox";
 import DaysCalendar from "./sub-components/daysCalendar";
@@ -18,6 +18,7 @@ const IndexTrip = ({ currentTrip, trips }) => {
   const [departures, setDepartures] = useState([false, null]);
   const [departureDates, setDepartureDates] = useState([false, null]);
   const [returnDates, setReturnDates] = useState([false, null]);
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
   useEffect(() => {
     if (currentTrip) {
       setDepartures((departures) => [
@@ -38,10 +39,11 @@ const IndexTrip = ({ currentTrip, trips }) => {
         returnDates[0],
         currentTrip.returnDates,
       ]);
+      setFavoritesOnly(currentTrip.favoritesOnly ? true : false);
       // setReturnDates((return)=>[return[0], currentTrip.returnDates])
     }
   }, [currentTrip]);
-
+  console.log(departureDates[1], currentTrip.departureDates);
   useEffect(() => {
     if (
       !currentTrip ||
@@ -58,6 +60,7 @@ const IndexTrip = ({ currentTrip, trips }) => {
       departures: departures[1],
       departureDates: departureDates[1],
       returnDates: returnDates[1],
+      favoritesOnly: favoritesOnly,
       id: currentTrip.id,
     };
 
@@ -69,7 +72,8 @@ const IndexTrip = ({ currentTrip, trips }) => {
       call = true;
     }
 
-    if (departures[1] && departures[1] !== currentTrip.departures) call = true;
+    if (departures[1] && !lodash.isEqual(departures[1], currentTrip.departures))
+      call = true;
 
     if (departureDates[1] && departureDates[1] !== currentTrip.departureDates)
       call = true;
@@ -77,6 +81,7 @@ const IndexTrip = ({ currentTrip, trips }) => {
     if (returnDates[1] && returnDates[1] !== currentTrip.returnDates)
       call = true;
 
+    if (favoritesOnly !== currentTrip.favoritesOnly) call = true;
     if (call) {
       console.log("updating");
       update(
@@ -93,7 +98,13 @@ const IndexTrip = ({ currentTrip, trips }) => {
         { merge: true }
       );
     }
-  }, [tripDates[1], departures[1], departureDates, returnDates]);
+  }, [
+    tripDates[1],
+    departures[1],
+    departureDates[1],
+    returnDates[1],
+    favoritesOnly,
+  ]);
 
   return (
     <div style={styles.selectedTripContainer}>
@@ -188,23 +199,35 @@ const IndexTrip = ({ currentTrip, trips }) => {
           </div>
         </div>
       </div>
+      <Checkbox
+        style={styles.checkbox}
+        label={"Desinations favoris Exclusivement ❤️"}
+        checked={favoritesOnly}
+        onChange={(event) => setFavoritesOnly(event.target.checked)}
+      />
     </div>
   );
 };
 const styles = {
   selectedTripContainer: {
     width: "120%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   optionContainer: {
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
   },
   parameters: {
     display: "flex",
     justifyContent: "space-around",
     marginTop: "30px",
+    gap: "20px",
   },
+  checkbox:{
+    marginTop:'20px'
+  }
 };
 
 export default Radium(IndexTrip);

@@ -8,6 +8,7 @@ import initFirebase from "./initFirebase.js";
 import { resolve } from "path";
 import toFirstUpperCase from "./utils/toFirstUpperCase.js";
 import randomID from "random-id";
+import favorites from "./config/favorites.js";
 initFirebase();
 const fireStore = getFirestore();
 const parseProxy = (proxy) => {
@@ -127,6 +128,7 @@ const updateTrips = async () => {
                   enabled: true,
                 },
               },
+              favoritesOnly: false,
               id: randomID(5),
             });
         }
@@ -368,14 +370,27 @@ const getTrains = async () => {
         for (const index in originDestinations) {
           const departureDates = botData.trips
             .map((trip) =>
-              trip.departures[origin]?.enabled ? trip.departureDates : null
+              trip.departures[origin]?.enabled &&
+              (trip.favoritesOnly
+                ? favorites.includes(index)
+                  ? true
+                  : false
+                : true)
+                ? trip.departureDates
+                : null
             )
             .flat()
             .filter((date) => date);
 
           const returnDates = botData.trips
-            .map((trip) =>
-              trip.departures[origin]?.enabled ? trip.returnDates : null
+            .map(
+              (trip) =>
+                trip.departures[origin]?.enabled &&
+                (trip.favoritesOnly
+                  ? favorites.includes(index)
+                    ? true
+                    : false
+                  : true)
             )
             .flat()
             .filter((date) => date);

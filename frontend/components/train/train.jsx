@@ -5,7 +5,7 @@ import Dates from "./sub-components/dates";
 const Train = ({ destination, trips }) => {
   return (
     <div style={styles.card}>
-      <Title align="center" order={3}>
+      <Title style={styles.title} align="center" order={3}>
         {destination}
       </Title>
       <div styles={styles.tripDates}>

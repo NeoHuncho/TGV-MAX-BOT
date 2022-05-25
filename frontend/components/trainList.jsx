@@ -3,6 +3,9 @@ import { Button, Text, Title, Card } from "@mantine/core";
 import { useCollection } from "swr-firestore-v9";
 import Radium from "radium";
 import Train from "./train/train";
+import moment from "node_modules/moment/moment";
+import sortFrenchDates from "utils/sortFrenchDates";
+
 const TrainList = () => {
   const { data, update } = useCollection(`trains`, {
     listen: true,
@@ -35,18 +38,19 @@ const TrainList = () => {
                       )
                         return;
 
-                      trips = Object.keys(trips)
-                        .sort(
-                          (a, b) =>
-                            new Date(b.substring(0, 10)) -
-                            new Date(a.substring(0, 10))
+                      let sortedTrips = Object.keys(trips)
+                        .sort((a, b) =>
+                          sortFrenchDates(
+                            a.substring(0, 10),
+                            b.substring(0, 10)
+                          )
                         )
                         .reduce((r, k) => ((r[k] = trips[k]), r), {});
                       return (
                         <Train
                           key={destination}
                           destination={destination}
-                          trips={trips}
+                          trips={sortedTrips}
                         />
                       );
                     })}
