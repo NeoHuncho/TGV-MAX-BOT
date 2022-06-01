@@ -4,17 +4,18 @@ import "firebase/app";
 import "firebase/auth";
 import { Fuego, FuegoProvider } from "swr-firestore-v9";
 import { MantineProvider } from "@mantine/core";
-const firebaseConfig = {
-  apiKey: "AIzaSyBOgUowl906XNZKkpKHOYl3d_XCQ3Jw528",
+
+const firebase_config = {
+  apiKey: process.env.API_KEY,
   authDomain: "tgv-max-weekends.firebaseapp.com",
-  projectId: "tgv-max-weekends",
+  projectId: process.env.PROJECT_ID,
   storageBucket: "tgv-max-weekends.appspot.com",
   messagingSenderId: "161848543916",
-  appId: "1:161848543916:web:60752012ddaec0eb22ed09",
+  appId: process.env.APP_ID,
 };
 
-const fuego = new Fuego(firebaseConfig);
-initializeApp(firebaseConfig);
+const fuego = new Fuego(firebase_config);
+initializeApp(firebase_config);
 
 function MyApp({ Component, pageProps }) {
   return (

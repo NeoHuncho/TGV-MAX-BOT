@@ -4,7 +4,6 @@ log
 outputs
 index.bat
 proxies.txt
-
-
+.env
 
 
