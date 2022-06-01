@@ -1,11 +1,14 @@
 import Radium from "radium";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Title, Button, Text } from "@mantine/core";
 import Image from "next/image";
+import cssStyles from "./responsive.module.css";
 
 import Trips from "./trips.jsx";
+import { BotContext } from "context/context";
 function TrainSettings() {
   const [showBotSettings, setShowBotSettings] = useState(false);
+  const { data } = useContext(BotContext);
 
   const styles = {
     container: {
@@ -13,7 +16,7 @@ function TrainSettings() {
       marginBottom: "20px",
       padding: "10px",
     },
-    optionsContainer: {
+    options_container: {
       display: "flex",
       flexDirection: "row",
       justifyContent: showBotSettings ? "center" : null,
@@ -35,22 +38,33 @@ function TrainSettings() {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.optionsContainer}>
-        <Button
-          leftIcon={<Image src="/icons/robot.svg" width={25} height={25} />}
-          size="md"
-          onClick={() => setShowBotSettings((botSettings) => !botSettings)}
+    <>
+      <div style={styles.container}>
+        <div
+          className={cssStyles.options_container}
+          style={styles.options_container}
         >
-          {!showBotSettings ? "Bot paramétres" : "Fermer bot paramétres"}
-        </Button>
-        {showBotSettings && (
-          <div>
-            <Trips />
-          </div>
-        )}
+          <Button
+            leftIcon={<Image src="/icons/robot.svg" width={25} height={25} />}
+            size="md"
+            onClick={() => setShowBotSettings((botSettings) => !botSettings)}
+          >
+            {!showBotSettings ? "Bot paramétres" : "Fermer bot paramétres"}
+          </Button>
+          {showBotSettings && (
+            <div>
+              <Trips />
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+      <Title align="center" order={5}>
+        Dèrniere mise a jour:
+      </Title>
+      <Text align="center" size={"sm"}>
+        {data && data.lastUpdate}
+      </Text>
+    </>
   );
 }
 

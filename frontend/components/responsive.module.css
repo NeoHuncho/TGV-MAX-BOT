@@ -1,0 +1,24 @@
+@media screen and (max-width:480px) {
+    .cards_container{
+        grid-template-columns: repeat(1,1fr)!important;
+
+    }
+    .options_container{
+flex-direction: column !important
+    }
+    .trips_container{
+        gap:0px !important;
+        flex-direction: column !important;
+    }
+    .date_title{
+        font-size: 20px ;
+        margin-top:40px;
+        padding-bottom: 0px;
+    }
+    .trip_params{
+        flex-direction: column !important;
+    }
+    .trip_container{
+        width: 100% !important;
+    }
+  }

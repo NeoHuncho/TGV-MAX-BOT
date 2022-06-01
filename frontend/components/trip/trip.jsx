@@ -8,7 +8,7 @@ import lodash from "lodash";
 import TrainCalendar from "./sub-components/trainCalendar";
 import DepartureCheckbox from "./sub-components/departureCheckbox";
 import DaysCalendar from "./sub-components/daysCalendar";
-
+import cssStyles from "../responsive.module.css";
 const IndexTrip = ({ currentTrip, trips }) => {
   const { update } = useDocument(`admin/botSettings`, {
     listen: true,
@@ -107,9 +107,12 @@ const IndexTrip = ({ currentTrip, trips }) => {
   ]);
 
   return (
-    <div style={styles.selectedTripContainer}>
+    <div
+      className={cssStyles.trip_container}
+      style={styles.selectedTripContainer}
+    >
       {currentTrip.maxDeparture !== "JJ-MM-AAAA" ? (
-        <Title align="center">
+        <Title className={cssStyles.date_title} align="center">
           {`${moment(currentTrip.maxDeparture).format("DD-MM-YYYY")} - 
         ${moment(currentTrip.maxReturn).format("DD-MM-YYYY")}`}
         </Title>
@@ -120,7 +123,7 @@ const IndexTrip = ({ currentTrip, trips }) => {
       )}
       {}
       <div>
-        <div style={styles.parameters}>
+        <div className={cssStyles.trip_params} style={styles.parameters}>
           <div style={styles.optionContainer}>
             <Button
               onClick={() =>
@@ -157,7 +160,7 @@ const IndexTrip = ({ currentTrip, trips }) => {
             )}
           </div>
         </div>
-        <div style={styles.parameters}>
+        <div className={cssStyles.trip_params} style={styles.parameters}>
           <div style={styles.optionContainer}>
             <Button
               disabled={departureDates[1] ? false : true}
@@ -225,9 +228,9 @@ const styles = {
     marginTop: "30px",
     gap: "20px",
   },
-  checkbox:{
-    marginTop:'20px'
-  }
+  checkbox: {
+    marginTop: "20px",
+  },
 };
 
 export default Radium(IndexTrip);

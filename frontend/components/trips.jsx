@@ -1,17 +1,16 @@
 import Radium from "radium";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button, Text, Title } from "@mantine/core";
 import { useDocument } from "swr-firestore-v9";
 import moment from "moment";
 import Image from "next/image";
 import randomID from "random-id";
 import TripIndex from "./trip/trip";
+import { BotContext } from "context/context";
+import cssStyles from "./responsive.module.css";
 const Trips = () => {
-  const { data, update } = useDocument(`admin/botSettings`, {
-    listen: true,
-    ignoreFirestoreDocumentSnapshotField: true,
-  });
+  const { data, update } = useContext(BotContext);
 
   const [trips, setTrips] = useState((data && data.trips) || []);
   const [currentTrip, setCurrentTrip] = useState(null);
@@ -85,7 +84,7 @@ const Trips = () => {
   };
   console.log(1, currentTrip);
   return (
-    <div style={styles.container}>
+    <div className={cssStyles.trips_container} style={styles.container}>
       <div style={styles.tripsContainer}>
         {trips.map((trip, key) => {
           return (
@@ -137,6 +136,7 @@ const styles = {
     display: "flex",
     flexDirection: "row",
     gap: "10vw",
+    justifyContent: "center",
   },
   tripsContainer: {
     display: "flex",

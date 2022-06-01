@@ -1,4 +1,4 @@
-export default array = [
+const favorites = [
   "ADGE",
   "AIX EN PROVENCE TGV",
   "AIX LES BAINS LE REVARD",
@@ -53,6 +53,8 @@ export default array = [
   "GUINGAMP",
   "ENDAYE",
   "HYERES",
+  "LILLE EUROPE",
+  "LILLE FLANDRES",
   "LA BAULE ESCOUBLAC",
   "LA ROCHE SUR YON",
   "LA TESTE",
@@ -77,3 +79,4 @@ export default array = [
   "MARSEILLE BLANCARDE",
   "MARSEILLE ST CHARLES",
 ];
+export default favorites;

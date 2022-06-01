@@ -370,27 +370,26 @@ const getTrains = async () => {
         for (const index in originDestinations) {
           const departureDates = botData.trips
             .map((trip) =>
-              trip.departures[origin]?.enabled &&
-              (trip.favoritesOnly
-                ? favorites.includes(index)
-                  ? true
-                  : false
-                : true)
-                ? trip.departureDates
+              trip.departures[origin]?.enabled
+                ? trip.favoritesOnly
+                  ? favorites.includes(originDestinations[index])
+                    ? trip.departureDates
+                    : null
+                  : trip.departureDates
                 : null
             )
             .flat()
             .filter((date) => date);
 
           const returnDates = botData.trips
-            .map(
-              (trip) =>
-                trip.departures[origin]?.enabled &&
-                (trip.favoritesOnly
-                  ? favorites.includes(index)
-                    ? true
-                    : false
-                  : true)
+            .map((trip) =>
+              trip.departures[origin]?.enabled
+                ? trip.favoritesOnly
+                  ? favorites.includes(originDestinations[index])
+                    ? trip.returnDates
+                    : null
+                  : trip.returnDates
+                : null
             )
             .flat()
             .filter((date) => date);
@@ -430,7 +429,7 @@ const getTrains = async () => {
     .collection("admin")
     .doc("botSettings")
     .set(
-      { lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"), running: false },
+      { lastUpdate: moment().format("DD-MM-YYYY HH:mm:ss"), running: false },
       { merge: true }
     );
   await logToFile(

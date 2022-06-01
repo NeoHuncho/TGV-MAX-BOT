@@ -5,7 +5,7 @@ import Radium from "radium";
 import Train from "./train/train";
 import moment from "node_modules/moment/moment";
 import sortFrenchDates from "utils/sortFrenchDates";
-
+import cssStyles from "./responsive.module.css";
 const TrainList = () => {
   const { data, update } = useCollection(`trains`, {
     listen: true,
@@ -26,7 +26,10 @@ const TrainList = () => {
                 <Title style={styles.title} align="center">
                   {destination.id}
                 </Title>
-                <div style={styles.cards_container}>
+                <div
+                  className={cssStyles.cards_container}
+                  style={styles.cards_container}
+                >
                   {Object.entries(destination)
                     .sort((a, b) => (a[0] > b[0] ? 1 : -1))
                     .map(([destination, trips]) => {
@@ -77,6 +80,7 @@ const styles = {
     gridColumnGap: "20px",
     gridRowGap: "40px",
   },
+
   card: {
     display: "flex",
     alignItems: "center",
