@@ -9,7 +9,7 @@ import TrainCalendar from "./sub-components/trainCalendar";
 import DepartureCheckbox from "./sub-components/departureCheckbox";
 import DaysCalendar from "./sub-components/daysCalendar";
 import cssStyles from "../responsive.module.css";
-const IndexTrip = ({ currentTrip, trips }) => {
+const IndexTrip = ({ currentTrip, trips, isAnonymous }) => {
   const { update } = useDocument(`admin/botSettings`, {
     listen: true,
     ignoreFirestoreDocumentSnapshotField: true,
@@ -43,7 +43,6 @@ const IndexTrip = ({ currentTrip, trips }) => {
       // setReturnDates((return)=>[return[0], currentTrip.returnDates])
     }
   }, [currentTrip]);
-  console.log(departureDates[1], currentTrip.departureDates);
   useEffect(() => {
     if (
       !currentTrip ||
@@ -126,6 +125,7 @@ const IndexTrip = ({ currentTrip, trips }) => {
         <div className={cssStyles.trip_params} style={styles.parameters}>
           <div style={styles.optionContainer}>
             <Button
+              disabled={isAnonymous}
               onClick={() =>
                 setTripDates((showDepartureDate) => [
                   !showDepartureDate[0],
@@ -146,6 +146,7 @@ const IndexTrip = ({ currentTrip, trips }) => {
           </div>
           <div style={styles.optionContainer}>
             <Button
+              disabled={isAnonymous}
               onClick={() =>
                 setDepartures((departures) => [!departures[0], departures[1]])
               }
@@ -163,7 +164,7 @@ const IndexTrip = ({ currentTrip, trips }) => {
         <div className={cssStyles.trip_params} style={styles.parameters}>
           <div style={styles.optionContainer}>
             <Button
-              disabled={departureDates[1] ? false : true}
+              disabled={departureDates[1] && !isAnonymous ? false : true}
               onClick={() =>
                 setDepartureDates((showDepatures) => [
                   !showDepatures[0],
@@ -184,7 +185,7 @@ const IndexTrip = ({ currentTrip, trips }) => {
           </div>
           <div style={styles.optionContainer}>
             <Button
-              disabled={returnDates[1] ? false : true}
+              disabled={returnDates[1] && !isAnonymous ? false : true}
               onClick={() =>
                 setReturnDates((departures) => [!departures[0], departures[1]])
               }
@@ -203,6 +204,7 @@ const IndexTrip = ({ currentTrip, trips }) => {
         </div>
       </div>
       <Checkbox
+        disabled={isAnonymous}
         style={styles.checkbox}
         label={"Desinations favoris Exclusivement ❤️"}
         checked={favoritesOnly}

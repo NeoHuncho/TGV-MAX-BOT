@@ -1,11 +1,16 @@
-import { TextInput, PasswordInput, Title, Button } from "@mantine/core";
+import { TextInput, PasswordInput, Title, Button, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import Head from "next/head";
 
 import { useRouter } from "next/router";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signInAnonymously,
+} from "firebase/auth";
 import { useEffect, useState } from "react";
 import Radium from "radium";
+import Image from "next/image";
 
 function SignIn() {
   const auth = getAuth();
@@ -17,6 +22,7 @@ function SignIn() {
   }, []);
 
   const [loading, setLoading] = useState(false);
+  const [loadingAnonymous, setLoadingAnonymous] = useState(false);
   const form = useForm({
     initialValues: {
       email: "",
@@ -45,7 +51,7 @@ function SignIn() {
       ).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.log(errorCode);
+
         if (errorCode.includes("user-not-found"))
           form.setFieldError("email", "Utilisateur introuvable");
         else if (errorCode.includes("wrong-password"))
@@ -54,6 +60,13 @@ function SignIn() {
       });
       if (user) return router.push("/trains");
     }
+  };
+
+  const signInUserAnonymously = async () => {
+    setLoadingAnonymous(true);
+    const user = await signInAnonymously(auth);
+    setLoadingAnonymous(false);
+    if (user) return router.push("/trains");
   };
 
   return (
@@ -89,9 +102,28 @@ function SignIn() {
           style={styles.signin_button}
           loading={loading}
         >
-          Sign In
+          Connexion
         </Button>
       </div>
+      <Text align="center" style={styles.ou}>
+        --ou--
+      </Text>
+      <Button
+        onClick={signInUserAnonymously}
+        style={styles.visit_button}
+        loading={loadingAnonymous}
+        color={"green"}
+        rightIcon={
+          <Image
+            src={"/icons/viewNew.png"}
+            height={18}
+            width={18}
+            style={{ marginTop: 1.5 }}
+          />
+        }
+      >
+        Visiter
+      </Button>
     </div>
   );
 }
@@ -114,6 +146,15 @@ const styles = {
   signin_button: {
     width: "100%",
     marginTop: "40px",
+  },
+  visit_button: {
+    width: 200,
+    marginTop: "20px",
+  },
+  ou: {
+    fontSize: "1.4rem",
+    fontWeight: "bold",
+    paddingTop: 20,
   },
 };
 

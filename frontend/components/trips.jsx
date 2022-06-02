@@ -3,6 +3,7 @@ import Radium from "radium";
 import { useContext, useEffect, useState } from "react";
 import { Button, Text, Title } from "@mantine/core";
 import { useDocument } from "swr-firestore-v9";
+import { getAuth } from "firebase/auth";
 import moment from "moment";
 import Image from "next/image";
 import randomID from "random-id";
@@ -10,6 +11,8 @@ import TripIndex from "./trip/trip";
 import { BotContext } from "context/context";
 import cssStyles from "./responsive.module.css";
 const Trips = () => {
+  const auth = getAuth();
+  const isAnonymous = auth?.currentUser.isAnonymous;
   const { data, update } = useContext(BotContext);
 
   const [trips, setTrips] = useState((data && data.trips) || []);
@@ -41,12 +44,13 @@ const Trips = () => {
   }, [data]);
 
   const deleteCurrentTrip = (trip) => {
-    update({
-      trips: data.trips.filter((tripDB) => {
-        if (trip.id === tripDB.id) return false;
-        return true;
-      }),
-    });
+    !isAnonymous &&
+      update({
+        trips: data.trips.filter((tripDB) => {
+          if (trip.id === tripDB.id) return false;
+          return true;
+        }),
+      });
   };
 
   const createNewTrip = async () => {
@@ -82,7 +86,7 @@ const Trips = () => {
       });
     setNewTrip(true);
   };
-  console.log(1, currentTrip);
+
   return (
     <div className={cssStyles.trips_container} style={styles.container}>
       <div style={styles.tripsContainer}>
@@ -121,12 +125,19 @@ const Trips = () => {
           }}
           style={styles.addButton}
           color="teal"
+          disabled={isAnonymous}
         >
           Ajouter dates
         </Button>
       </div>
       <div>
-        {currentTrip && <TripIndex trips={trips} currentTrip={currentTrip} />}
+        {currentTrip && (
+          <TripIndex
+            isAnonymous={isAnonymous}
+            trips={trips}
+            currentTrip={currentTrip}
+          />
+        )}
       </div>
     </div>
   );

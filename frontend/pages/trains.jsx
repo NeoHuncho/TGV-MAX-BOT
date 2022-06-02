@@ -1,13 +1,17 @@
 import Radium from "radium";
-import { useState, createContext, useContext } from "react";
+import { useState, createContext, useContext, useEffect } from "react";
 import { Button, Text, Title } from "@mantine/core";
 import { useDocument } from "swr-firestore-v9";
 import { getAuth, signOut } from "firebase/auth";
 import TrainSettings from "@components/trainSettings";
 import TrainList from "@components/trainList";
 import { BotContext } from "context/context";
+import { useRouter } from "next/router";
 
 function Trains() {
+  const router = useRouter();
+  const auth = getAuth();
+
   const { data, update } = useDocument(`admin/botSettings`, {
     listen: true,
     ignoreFirestoreDocumentSnapshotField: true,
