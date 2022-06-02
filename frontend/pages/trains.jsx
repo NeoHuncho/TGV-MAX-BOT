@@ -9,13 +9,17 @@ import { BotContext } from "context/context";
 import { useRouter } from "next/router";
 
 function Trains() {
-  const router = useRouter();
   const auth = getAuth();
-
-  const { data, update } = useDocument(`admin/botSettings`, {
+  const router = useRouter();
+  const user = auth?.currentUser;
+  const { data, update } = useDocument("admin/botSettings", {
     listen: true,
     ignoreFirestoreDocumentSnapshotField: true,
   });
+  useEffect(() => {
+    if (!user) router.push("/signin");
+  }, [user]);
+
   return (
     <BotContext.Provider value={{ data, update }}>
       <div className={styles.container}>
