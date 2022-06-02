@@ -11,16 +11,21 @@ import { useRouter } from "next/router";
 function Trains() {
   const auth = getAuth();
   const router = useRouter();
-  const redirectToLogin = () => {
-    if (!auth?.currentUser) router.push("/signin");
-  };
-  if (!auth?.currentUser) setTimeout(redirectToLogin,800);
+  // signOut(auth)
+  useEffect(() => {
+    if (!auth.currentUser)
+      setTimeout(() => {
+        if (!auth.currentUser) router.push("/signin");
+        else return;
+      }, 100);
+    else return;
+  }, [auth.currentUser]);
 
   const { data, update } = useDocument("admin/botSettings", {
     listen: true,
     ignoreFirestoreDocumentSnapshotField: true,
   });
-
+  console.log(data, auth);
   return (
     <BotContext.Provider value={{ data, update }}>
       <div className={styles.container}>
