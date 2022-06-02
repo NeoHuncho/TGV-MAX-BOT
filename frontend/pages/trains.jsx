@@ -11,31 +11,26 @@ import { useRouter } from "next/router";
 function Trains() {
   const auth = getAuth();
   const router = useRouter();
-  // signOut(auth)
   useEffect(() => {
-    if (!auth.currentUser)
-      setTimeout(() => {
-        if (!auth.currentUser) router.push("/signin");
-        else return;
-      }, 100);
+    if (!auth.currentUser) router.push("/");
     else return;
-  }, [auth.currentUser]);
+  }, []);
 
   const { data, update } = useDocument("admin/botSettings", {
     listen: true,
     ignoreFirestoreDocumentSnapshotField: true,
   });
-  console.log(data, auth);
-  return (
-    <BotContext.Provider value={{ data, update }}>
-      <div className={styles.container}>
-        <div className={styles.options}>
-          <TrainSettings />
-          <TrainList />
+  if (auth.currentUser)
+    return (
+      <BotContext.Provider value={{ data, update }}>
+        <div className={styles.container}>
+          <div className={styles.options}>
+            <TrainSettings />
+            <TrainList />
+          </div>
         </div>
-      </div>
-    </BotContext.Provider>
-  );
+      </BotContext.Provider>
+    );
 }
 
 const styles = {
