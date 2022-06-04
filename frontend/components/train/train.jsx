@@ -23,11 +23,13 @@ const styles = {
     alignItems: "center",
     flexDirection: "column",
     backgroundColor: "#1864ab",
-    borderRadius: "10px",
+    borderRadius: "5px",
     gap: "15px",
     padding: "15px",
+    minHeight: "160px",
     height: "fit-content",
-    boxShadow: "0px 0px 5px #1864ab",
+    boxShadow:
+      " rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;",
   },
 
   tripDates: { marginTop: "20px" },

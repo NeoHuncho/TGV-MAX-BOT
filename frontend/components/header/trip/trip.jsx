@@ -1,6 +1,6 @@
 import React from "react";
 import Radium from "radium";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Button, Text, Title, Checkbox } from "@mantine/core";
 import { useDocument } from "swr-firestore-v9";
 import moment from "moment";
@@ -8,12 +8,11 @@ import lodash from "lodash";
 import TrainCalendar from "./sub-components/trainCalendar";
 import DepartureCheckbox from "./sub-components/departureCheckbox";
 import DaysCalendar from "./sub-components/daysCalendar";
-import cssStyles from "../responsive.module.css";
+import cssStyles from "../../responsive.module.css";
+import { BotContext } from "context/context";
+import formatDate from "@utils/formatDate";
 const IndexTrip = ({ currentTrip, trips, isAnonymous }) => {
-  const { update } = useDocument(`admin/botSettings`, {
-    listen: true,
-    ignoreFirestoreDocumentSnapshotField: true,
-  });
+  const { updateBot: update } = useContext(BotContext);
   const [tripDates, setTripDates] = useState([false, null]);
   const [departures, setDepartures] = useState([false, null]);
   const [departureDates, setDepartureDates] = useState([false, null]);
@@ -112,8 +111,7 @@ const IndexTrip = ({ currentTrip, trips, isAnonymous }) => {
     >
       {currentTrip.maxDeparture !== "JJ-MM-AAAA" ? (
         <Title className={cssStyles.date_title} align="center">
-          {`${moment(currentTrip.maxDeparture).format("DD-MM-YYYY")} - 
-        ${moment(currentTrip.maxReturn).format("DD-MM-YYYY")}`}
+          {formatDate(currentTrip.maxDeparture, currentTrip.maxReturn)}
         </Title>
       ) : (
         <Title align="center">

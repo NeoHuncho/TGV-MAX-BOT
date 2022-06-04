@@ -8,6 +8,7 @@
           "@pubic/*": ["public/*"],
           "@components/*": ["components/*"],
           "@styles*": ["styles/*"],
+          "@utils/*": ["utils/*"],
         }
       },
       "exclude": ["node_modules", "dist"]

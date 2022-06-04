@@ -11,7 +11,7 @@ const Dates = ({ tripDate, trips }) => {
     title_container: {
       display: "flex",
       alignItems: "center",
-      cursor:'pointer'
+      cursor: "pointer",
     },
     trip: {
       display: "flex",
@@ -24,6 +24,8 @@ const Dates = ({ tripDate, trips }) => {
     },
     trips: {
       display: "flex",
+      width: "100%",
+      justifyContent: "center",
     },
   };
 
@@ -60,7 +62,7 @@ const Dates = ({ tripDate, trips }) => {
                     {trips[dayOfTheWeek].map((departure, key) => {
                       return (
                         <div style={styles.trips} key={key}>
-                          <Text size="xs">
+                          <Text align="center" size="xs">
                             {departure.departureTime} - {departure.arrivalTime}{" "}
                             ({departure.seatsLeft} places)
                           </Text>

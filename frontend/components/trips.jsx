@@ -2,19 +2,19 @@ import Radium from "radium";
 
 import { useContext, useEffect, useState } from "react";
 import { Button, Text, Title } from "@mantine/core";
-import { useDocument } from "swr-firestore-v9";
+
 import { getAuth } from "firebase/auth";
 import moment from "moment";
 import Image from "next/image";
 import randomID from "random-id";
-import TripIndex from "./trip/trip";
+import TripIndex from "./header/trip/trip";
 import { BotContext } from "context/context";
 import cssStyles from "./responsive.module.css";
 const Trips = () => {
   const auth = getAuth();
   const isAnonymous = auth?.currentUser.isAnonymous;
-  const { data, update } = useContext(BotContext);
-
+  const { dataBot: data, updateBot: update } = useContext(BotContext);
+  console.log(data);
   const [trips, setTrips] = useState((data && data.trips) || []);
   const [currentTrip, setCurrentTrip] = useState(null);
   const [newTrip, setNewTrip] = useState(false);
@@ -111,7 +111,16 @@ const Trips = () => {
                   })
                 }
               >
-                <Text size="lg" weight={500}>
+                <Text
+                  size="lg"
+                  weight={500}
+                  sx={(theme) => ({
+                    transition: "color 150ms ease-in-out",
+                    "&:hover": {
+                      color: "#2c79cf",
+                    },
+                  })}
+                >
                   {`${moment(trip.maxDeparture).format("DD-MM-YYYY")} - 
             ${moment(trip.maxReturn).format("DD-MM-YYYY")}`}
                 </Text>
@@ -146,7 +155,7 @@ const styles = {
   container: {
     display: "flex",
     flexDirection: "row",
-    gap: "10vw",
+
     justifyContent: "center",
   },
   tripsContainer: {

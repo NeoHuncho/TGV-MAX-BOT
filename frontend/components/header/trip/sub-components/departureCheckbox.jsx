@@ -1,6 +1,6 @@
 import Radium from "radium";
 import React from "react";
-import { useDocument } from "swr-firestore-v9";
+
 import { Checkbox } from "@mantine/core";
 const departureCheckbox = ({ departures, setDepartures }) => {
   return (
