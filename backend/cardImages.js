@@ -3,6 +3,8 @@ import { getDatabase } from "firebase-admin/database";
 import { getFirestore } from "firebase-admin/firestore";
 import initFirebase from "./initFirebase.js";
 import toFirstUpperCase from "./utils/toFirstUpperCase.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 initFirebase();
 const db = getDatabase().ref("destinations");
@@ -34,7 +36,7 @@ const run = async () => {
       params: { q: destination },
       headers: {
         "X-RapidAPI-Host": "bing-image-search1.p.rapidapi.com",
-        "X-RapidAPI-Key": "1752ae6bcfmsh6acd1ad1a96763cp1aa4cajsnd4d242d073f3",
+        "X-RapidAPI-Key": process.env.RAPID_API_KEY,
       },
     };
 
