@@ -7,9 +7,8 @@ import Trips from "@components/trips";
 import Filters from "./filters/filters";
 import { isMobile } from "react-device-detect";
 import cssStyles from "@components/responsive.module.css";
-const trainsHeader = () => {
+const TrainsHeader = () => {
   const [currentlyShown, setCurrentlyShown] = useState(null);
-  const { dataTrains } = useContext(TrainsContext);
   const { dataBot } = useContext(BotContext);
   return (
     <>
@@ -86,4 +85,4 @@ const styles = {
   },
 };
 
-export default Radium(trainsHeader);
+export default Radium(TrainsHeader);
