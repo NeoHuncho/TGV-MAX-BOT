@@ -15,7 +15,7 @@ const TrainsHeader = () => {
       <div style={styles.container}>
         {!isMobile && <Filters />}
         <div style={styles.update}>
-          <Title align="center" order={5}>
+          <Title align="center" className={cssStyles.last_update} order={5}>
             Dèrniere mise a jour:
           </Title>
           <Text align="center" size={"sm"}>
@@ -24,7 +24,7 @@ const TrainsHeader = () => {
         </div>
         <Button
           leftIcon={<Image src="/icons/robot.svg" width={25} height={25} />}
-          size={!isMobile ? "md" : "sm"}
+          size={!isMobile ? "md" : "xs"}
           onClick={() =>
             setCurrentlyShown((currentlyShown) =>
               currentlyShown === "bot" ? null : "bot"
@@ -57,7 +57,7 @@ const TrainsHeader = () => {
 
 const styles = {
   container: {
-    width: "100vw",
+    width: "calc(100vw - 30px)",
     display: "flex",
     padding: 30,
     justifyContent: "space-between",

@@ -9,11 +9,8 @@ const PopperComponent = ({ showing }) => {
   if (!showing) return;
   if (!data || !filters) return null;
 
-  const updateFilter = (type, label, value) => {
-    console.log(type, label);
+  const updateFilter = (type, label, value) =>
     setFilters({ ...filters, [type]: { ...filters[type], [label]: !value } });
-  };
-
   return (
     <div style={styles.container}>
       <div style={styles.checkboxContainer}>
@@ -24,6 +21,7 @@ const PopperComponent = ({ showing }) => {
               label={key}
               checked={value}
               onChange={() => updateFilter("departures", key, value)}
+              style={styles.checkbox}
             />
           ))}
         {showing === "destinations" &&
@@ -33,6 +31,7 @@ const PopperComponent = ({ showing }) => {
               label={key}
               checked={value}
               onChange={() => updateFilter("destinations", key, value)}
+              style={styles.checkbox}
             />
           ))}
         {showing === "dates" &&
@@ -42,6 +41,7 @@ const PopperComponent = ({ showing }) => {
               label={key}
               checked={value}
               onChange={() => updateFilter("dates", key, value)}
+              style={styles.checkbox}
             />
           ))}
       </div>
@@ -59,6 +59,9 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     marginTop: 10,
+  },
+  checkbox: {
+    cursor: "pointer",
   },
 };
 

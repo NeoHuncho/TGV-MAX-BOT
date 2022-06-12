@@ -20,6 +20,12 @@
     }
     .trip_container{
         width: 100% !important;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        margin-top: 20px;
+        background-color: #061321;
+        border-radius: 10px;
+  
     }
     .filers_container{
         padding-left: 25px;
@@ -28,6 +34,13 @@
     .filter_container{
         padding-left: 20px !important;
         padding-right: 20px !important;
+    }
+    .last_update{
+        font-size:80%;
+        
+    }
+    .add_button{
+        width: 230px;
     }
   }
 

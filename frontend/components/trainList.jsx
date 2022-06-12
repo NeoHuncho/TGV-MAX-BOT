@@ -21,55 +21,90 @@ const TrainList = () => {
       <TrainsHeader />
       {trains &&
         Object.values(trains)
+          //filter  dates by filter
           .filter(
-            (destination) =>
+            (departure) =>
               filters.departures[
-                destination.id.includes("Paris")
+                departure.id.includes("Paris")
                   ? "PARIS (intramuros)"
-                  : destination.id.toUpperCase()
+                  : departure.id.toUpperCase()
               ]
           )
-          .map((destination, key) => {
-            if (Object.keys(destination).length > 4)
-              return (
-                <div style={styles.container} key={key}>
-                  <Title style={styles.title} align="center">
-                    {destination.id}
-                  </Title>
-                  <div
-                    className={cssStyles.cards_container}
-                    style={styles.cards_container}
-                  >
-                    {Object.entries(destination)
-                      .sort((a, b) => (a[0] > b[0] ? 1 : -1))
-                      .map(([destination, trips]) => {
-                        if (
-                          destination === "id" ||
-                          destination === "exists" ||
-                          destination === "hasPendingWrites" ||
-                          destination === "__snapshot"
-                        )
-                          return;
+          //to remove undefined values
+          .map((departure) => {
+            return Object.keys(departure)
+              .filter((key) =>
+                key === "id" ||
+                key === "exists" ||
+                key === "hasPendingWrites" ||
+                key === "__snapshot"
+                  ? false
+                  : true
+              )
+              .reduce((obj, key) => {
+                obj[key] = departure[key];
+                return obj;
+              }, {});
+          })
 
-                        let sortedTrips = Object.keys(trips)
+          //render element
+          .map((departure, key) => {
+            return (
+              <div style={styles.container} key={key}>
+                <Title style={styles.title} align="center">
+                  {trains[key].id}
+                </Title>
+                <div
+                  className={cssStyles.cards_container}
+                  style={styles.cards_container}
+                >
+                  {Object.entries(departure)
+
+                    .sort((a, b) => (a[0] > b[0] ? 1 : -1))
+                    .map(([departure, trips]) => (
+                      <Train
+                        key={departure}
+                        destination={departure}
+                        trips={Object.keys(trips)
                           .sort((a, b) =>
                             sortFrenchDates(
                               a.substring(0, 10),
                               b.substring(0, 10)
                             )
                           )
-                          .reduce((r, k) => ((r[k] = trips[k]), r), {});
-                        return (
-                          <Train
-                            key={destination}
-                            destination={destination}
-                            trips={sortedTrips}
-                          />
-                        );
-                      })}
-                  </div>
+                          //filter by date
+                          .filter((trip) => {
+                            let found = false;
+                            Object.entries(filters.dates).map(
+                              ([filterTrip, enabled]) =>
+                                enabled &&
+                                moment(
+                                  filterTrip.substring(13),
+                                  "DD-MM-YYYY"
+                                ).format("MM-DD-YYYY") >=
+                                  moment(
+                                    trip.substring(0, 10),
+                                    "DD-MM-YYYY"
+                                  ).format("MM-DD-YYYY") &&
+                                moment(
+                                  trip.substring(0, 10),
+                                  "DD-MM-YYYY"
+                                ).format("MM-DD-YYYY") >=
+                                  moment(
+                                    filterTrip.substring(0, 10),
+                                    "DD-MM-YYYY"
+                                  ).format("MM-DD-YYYY")
+                                  ? (found = true)
+                                  : null
+                            );
+                            return found;
+                          })
+                          .reduce((r, k) => ((r[k] = trips[k]), r), {})}
+                      />
+                    ))}
                 </div>
-              );
+              </div>
+            );
           })}
     </>
   );

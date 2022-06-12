@@ -128,7 +128,7 @@ const updateTrips = async () => {
                   enabled: true,
                 },
               },
-              favoritesOnly: false,
+              favoritesOnly: true,
               id: randomID(5),
             });
         }
@@ -311,6 +311,7 @@ const getRelevantTrains = async (location, days) => {
   return sortedTrainsData;
 };
 moment().format("DD-MM-YYYY");
+
 const formatTrainsForFirebase = (file) => {
   for (const key in file) {
     for (const week in file[key]) {
@@ -337,6 +338,7 @@ const formatTrainsForFirebase = (file) => {
     file[toFirstUpperCase(key)] = file[key];
     delete file[key];
   }
+
   for (const key in file) {
     file[key] = Object.keys(file[key])
       .sort((a, b) => {

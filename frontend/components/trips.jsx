@@ -135,6 +135,7 @@ const Trips = () => {
           style={styles.addButton}
           color="teal"
           disabled={isAnonymous}
+          className={cssStyles.add_button}
         >
           Ajouter dates
         </Button>

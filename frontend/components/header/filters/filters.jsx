@@ -15,6 +15,7 @@ const Filters = () => {
           }
           order={5}
           color="teal"
+          style={styles.button}
         >
           dates
         </Title>
@@ -27,6 +28,7 @@ const Filters = () => {
           }
           order={5}
           color="teal"
+          style={styles.button}
         >
           departs
         </Title>
@@ -39,6 +41,7 @@ const Filters = () => {
           }
           order={5}
           color="teal"
+          style={styles.button}
         >
           destinations
         </Title>
@@ -58,6 +61,9 @@ const styles = {
     gap: 15,
 
     justifyContent: "space-between",
+  },
+  button: {
+    cursor: "pointer",
   },
 };
 
