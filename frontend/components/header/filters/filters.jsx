@@ -14,7 +14,6 @@ const Filters = () => {
             setShowing((showing) => (showing === "dates" ? null : "dates"))
           }
           order={5}
-          color="teal"
           style={styles.button}
         >
           dates
@@ -27,7 +26,6 @@ const Filters = () => {
             )
           }
           order={5}
-          color="teal"
           style={styles.button}
         >
           departs
@@ -40,7 +38,6 @@ const Filters = () => {
             )
           }
           order={5}
-          color="teal"
           style={styles.button}
         >
           destinations
